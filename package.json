@@ -1,0 +1,17 @@
+{
+  "name": "vocab-article-generator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "generate": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
+    "epub-gen-memory": "^1.1.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

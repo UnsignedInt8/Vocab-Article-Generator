@@ -1,0 +1,11 @@
+node_modules/
+.env
+*.log
+
+# 用户个人数据 / 运行时生成的产物，不应纳入版本控制
+data.json
+used-words.json
+epub/
+mp3/*.m4b
+mp3/*.wav
+
