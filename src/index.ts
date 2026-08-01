@@ -9,12 +9,17 @@ const processAll = process.argv.includes("--all");
 async function processBatch(
   words: string[],
   config: ReturnType<typeof loadConfig>
-): Promise<void> {
+): Promise<string[]> {
   console.log(`\n📚 使用 ${words.length} 个单词生成文章: ${words.join(", ")}`);
 
-  const { title, article } = await generateArticle(words, config);
+  const { title, article, usedWords } = await generateArticle(words, config);
   console.log(`\n✅ 文章生成完成: 《${title}》`);
   console.log(`   字数约 ${article.split(/\s+/).filter(Boolean).length} 词`);
+
+  if (usedWords.length < words.length) {
+    const notUsed = words.filter((w) => !usedWords.includes(w));
+    console.log(`⚠️  以下 ${notUsed.length} 个单词未在文章中使用: ${notUsed.join(", ")}`);
+  }
 
   const epubPath = await buildEpub(title, article, config.epubOutputDir);
   console.log(`📖 EPUB 已生成: ${epubPath}`);
@@ -26,6 +31,8 @@ async function processBatch(
     config.audiblezBin
   );
   console.log(`🔊 音频生成完成: ${audioPath}`);
+
+  return usedWords;
 }
 
 async function main() {
@@ -46,11 +53,11 @@ async function main() {
 
   do {
     const batch = remaining.slice(0, config.batchSize);
-    await processBatch(batch, config);
+    const actuallyUsedWords = await processBatch(batch, config);
 
-    for (const w of batch) usedWords.add(w);
+    for (const w of actuallyUsedWords) usedWords.add(w);
     await saveUsedWords(config.usedWordsDbPath, usedWords);
-    console.log(`💾 已记录 ${batch.length} 个已使用单词到 ${config.usedWordsDbPath}`);
+    console.log(`💾 已记录 ${actuallyUsedWords.length} 个已使用单词到 ${config.usedWordsDbPath}`);
 
     remaining = remaining.slice(config.batchSize);
   } while (processAll && remaining.length > 0);

@@ -4,6 +4,7 @@ import type { ArticleLevel, Config } from "./config";
 export interface GeneratedArticle {
   title: string;
   article: string;
+  usedWords: string[];
 }
 
 const ARTICLE_SCHEMA = {
@@ -64,7 +65,7 @@ async function requestArticle(
   client: Anthropic,
   config: Config,
   prompt: string
-): Promise<GeneratedArticle> {
+): Promise<{ title: string; article: string }> {
   const response = await client.messages.create({
     model: config.model,
     max_tokens: 4096,
@@ -89,7 +90,7 @@ async function requestArticle(
     throw new Error("Claude 的响应中没有找到文本内容。");
   }
 
-  const parsed = JSON.parse(textBlock.text) as GeneratedArticle;
+  const parsed = JSON.parse(textBlock.text) as { title: string; article: string };
   if (!parsed.title || !parsed.article) {
     throw new Error("Claude 返回的 JSON 缺少 title 或 article 字段。");
   }
@@ -126,5 +127,11 @@ export async function generateArticle(
     }
   }
 
-  return result;
+  const finalMissing = findMissingWords(result.article, words);
+  const usedWords = words.filter((w) => !finalMissing.includes(w));
+
+  return {
+    ...result,
+    usedWords,
+  };
 }
