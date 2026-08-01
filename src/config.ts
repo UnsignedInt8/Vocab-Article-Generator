@@ -12,6 +12,8 @@ function requireEnv(name: string): string {
   return value;
 }
 
+export type ArticleLevel = "simple" | "intermediate" | "advanced";
+
 export interface Config {
   apiKey: string;
   baseURL: string;
@@ -25,6 +27,7 @@ export interface Config {
 
   batchSize: number;
   articleWordCount: number;
+  articleLevel: ArticleLevel;
 
   voice: string;
   audiblezBin: string;
@@ -46,6 +49,7 @@ export function loadConfig(): Config {
 
     batchSize: Number(env("BATCH_SIZE", "30")),
     articleWordCount: Number(env("ARTICLE_WORD_COUNT", "400")),
+    articleLevel: (env("ARTICLE_LEVEL", "simple") as ArticleLevel) ?? "simple",
 
     voice: env("VOICE", "af_heart")!,
     audiblezBin: env("AUDIBLEZ_BIN", "audiblez")!,

@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { Config } from "./config";
+import type { ArticleLevel, Config } from "./config";
 
 export interface GeneratedArticle {
   title: string;
@@ -23,15 +23,32 @@ const ARTICLE_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-function buildPrompt(words: string[], targetWordCount: number): string {
-  return `Write an engaging, coherent English article of approximately ${targetWordCount} words for an intermediate-to-advanced English learner.
+const LEVEL_INSTRUCTIONS: Record<ArticleLevel, string> = {
+  simple: `- Difficulty: CEFR A2–B1 (simple/elementary). This is the most important requirement.
+- Use short, simple sentences — mostly simple or compound sentences (joined with "and"/"but"/"so"). Avoid long sentences with multiple subordinate clauses.
+- Outside of the required vocabulary words below, use only common, everyday words (the kind a beginner-to-intermediate learner already knows). Do not introduce other difficult or rare words.
+- Pick a concrete, easy-to-follow topic (a simple story, daily life, a familiar situation) — avoid abstract, academic, or technical subjects.
+- Avoid idioms, wordplay, and complex figurative language.`,
+  intermediate: `- Difficulty: CEFR B1–B2 (intermediate). Use moderately varied sentence structure, but keep it easy to follow.
+- Outside of the required vocabulary words below, prefer common vocabulary; you may use a few moderately advanced words if the topic calls for it.
+- The article should read naturally, as if written for a general-interest publication.`,
+  advanced: `- Difficulty: CEFR C1 (advanced). Natural, well-crafted prose with varied sentence structure, as if written for a general-interest publication.
+- You may use a richer vocabulary outside of the required words below, as long as the article stays coherent and engaging.`,
+};
+
+function buildPrompt(
+  words: string[],
+  targetWordCount: number,
+  level: ArticleLevel
+): string {
+  return `Write an engaging, coherent English article of approximately ${targetWordCount} words.
 
 The article MUST naturally use every one of the following ${words.length} vocabulary words at least once (any grammatical form is fine — e.g. plural, past tense, etc.):
 
 ${words.map((w) => `- ${w}`).join("\n")}
 
 Requirements:
-- The article should read naturally, as if written for a general-interest publication (not a list of vocabulary example sentences).
+${LEVEL_INSTRUCTIONS[level]}
 - Pick a single clear topic/story that lets all the words fit naturally.
 - Do not explicitly point out or define the vocabulary words in the text.
 - Give the article a short, engaging title.
@@ -88,7 +105,7 @@ export async function generateArticle(
     baseURL: config.baseURL,
   });
 
-  const prompt = buildPrompt(words, config.articleWordCount);
+  const prompt = buildPrompt(words, config.articleWordCount, config.articleLevel);
   let result = await requestArticle(client, config, prompt);
 
   const missing = findMissingWords(result.article, words);

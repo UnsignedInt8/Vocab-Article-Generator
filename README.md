@@ -59,6 +59,7 @@ cp .env.example .env
 | `AUDIO_OUTPUT_DIR` | | `./mp3` | 音频文件输出目录 |
 | `BATCH_SIZE` | | `30` | 每篇文章使用的单词数 |
 | `ARTICLE_WORD_COUNT` | | `400` | 文章目标字数 |
+| `ARTICLE_LEVEL` | | `simple` | 文章难度：`simple`（简单，短句+常用词，默认）/ `intermediate`（中等）/ `advanced`（较难，接近原版文章） |
 | `VOICE` | | `af_heart` | audiblez 朗读音色 |
 | `AUDIBLEZ_BIN` | | `audiblez` | audiblez 可执行文件路径/名称，如果不在 PATH 里可写绝对路径 |
 
