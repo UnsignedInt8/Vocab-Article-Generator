@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { ArticleLevel, Config } from "./config";
+import { findMissingWords } from "./wordMatch";
 
 export interface GeneratedArticle {
   title: string;
@@ -54,11 +55,6 @@ ${LEVEL_INSTRUCTIONS[level]}
 - Do not explicitly point out or define the vocabulary words in the text.
 - Give the article a short, engaging title.
 - Target length: about ${targetWordCount} words (some flexibility is fine, but stay reasonably close).`;
-}
-
-function findMissingWords(article: string, words: string[]): string[] {
-  const lowerArticle = article.toLowerCase();
-  return words.filter((w) => !lowerArticle.includes(w.toLowerCase()));
 }
 
 async function requestArticle(
