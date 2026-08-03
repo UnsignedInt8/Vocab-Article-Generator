@@ -30,6 +30,7 @@ export interface Config {
   articleLevel: ArticleLevel;
 
   voice: string;
+  voiceSpeed: number;
   audiblezBin: string;
 }
 
@@ -52,6 +53,7 @@ export function loadConfig(): Config {
     articleLevel: (env("ARTICLE_LEVEL", "simple") as ArticleLevel) ?? "simple",
 
     voice: env("VOICE", "af_heart")!,
+    voiceSpeed: Number(env("VOICE_SPEED", "1")),
     audiblezBin: env("AUDIBLEZ_BIN", "audiblez")!,
   };
 }

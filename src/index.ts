@@ -27,6 +27,7 @@ async function processBatch(
   const audioPath = await generateAudio(
     epubPath,
     config.voice,
+    config.voiceSpeed,
     config.audioOutputDir,
     config.audiblezBin
   );

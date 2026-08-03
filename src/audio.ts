@@ -4,12 +4,15 @@ import path from "node:path";
 export async function generateAudio(
   epubPath: string,
   voice: string,
+  voiceSpeed: number,
   outputDir: string,
   audiblezBin: string
 ): Promise<string> {
   await mkdir(outputDir, { recursive: true });
 
-  console.log(`🎙️  正在调用 ${audiblezBin} 生成音频（voice=${voice}）...`);
+  console.log(
+    `🎙️  正在调用 ${audiblezBin} 生成音频（voice=${voice}, speed=${voiceSpeed}）...`
+  );
 
   // audiblez writes intermediate ffmpeg-concat file lists using this path
   // verbatim; if it's relative, ffmpeg's concat demuxer re-resolves the
@@ -19,7 +22,16 @@ export async function generateAudio(
   const absoluteEpubPath = path.resolve(epubPath);
 
   const proc = Bun.spawn(
-    [audiblezBin, absoluteEpubPath, "-v", voice, "-o", absoluteOutputDir],
+    [
+      audiblezBin,
+      absoluteEpubPath,
+      "-v",
+      voice,
+      "-s",
+      String(voiceSpeed),
+      "-o",
+      absoluteOutputDir,
+    ],
     {
       stdout: "inherit",
       stderr: "inherit",
