@@ -108,19 +108,8 @@ export async function generateArticle(
   const missing = findMissingWords(result.article, words);
   if (missing.length > 0) {
     console.warn(
-      `⚠️  文章缺少以下单词，正在重试一次: ${missing.join(", ")}`
+      `⚠️  文章缺少以下单词: ${missing.join(", ")}`
     );
-    const retryPrompt = `${prompt}\n\nYour previous draft was missing these required words — make sure this version includes ALL of them naturally: ${missing.join(
-      ", "
-    )}.`;
-    result = await requestArticle(client, config, retryPrompt);
-
-    const stillMissing = findMissingWords(result.article, words);
-    if (stillMissing.length > 0) {
-      console.warn(
-        `⚠️  重试后仍缺少以下单词（将继续，不阻塞流程）: ${stillMissing.join(", ")}`
-      );
-    }
   }
 
   const finalMissing = findMissingWords(result.article, words);

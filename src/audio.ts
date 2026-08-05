@@ -33,8 +33,8 @@ export async function generateAudio(
       absoluteOutputDir,
     ],
     {
-      stdout: "inherit",
-      stderr: "inherit",
+      stdout: "ignore",
+      stderr: "ignore",
     }
   );
 
