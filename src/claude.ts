@@ -38,6 +38,10 @@ const LEVEL_INSTRUCTIONS: Record<ArticleLevel, string> = {
 - You may use a richer vocabulary outside of the required words below, as long as the article stays coherent and engaging.`,
 };
 
+const STYLE_INSTRUCTIONS = `- Style: modern, everyday, and down-to-earth. Write about contemporary real-life situations people actually experience today — e.g. work and commuting, apps and smartphones, social media, online shopping and delivery, cafés and restaurants, travel, fitness, cooking at home, friends and family, remote work, streaming, side projects.
+- Use natural, conversational English the way people talk and write in daily life today. Avoid old-fashioned, literary, or textbook-like wording, and avoid fairy-tale, historical, or fantasy settings.
+- Make it feel like a relatable personal story, blog post, or slice-of-life piece with believable characters, places, and details — not a lecture or a dry essay.`;
+
 function buildPrompt(
   words: string[],
   targetWordCount: number,
@@ -51,7 +55,8 @@ ${words.map((w) => `- ${w}`).join("\n")}
 
 Requirements:
 ${LEVEL_INSTRUCTIONS[level]}
-- Pick a single clear topic/story that lets all the words fit naturally.
+${STYLE_INSTRUCTIONS}
+- Pick a single clear topic/story that lets all the words fit naturally within that modern, everyday setting.
 - Do not explicitly point out or define the vocabulary words in the text.
 - Give the article a short, engaging title.
 - Target length: about ${targetWordCount} words (some flexibility is fine, but stay reasonably close).`;
